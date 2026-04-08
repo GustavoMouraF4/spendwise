@@ -1,4 +1,4 @@
-name: CI
+name: CI - Build & Test
 
 on:
   push:
@@ -47,6 +47,7 @@ jobs:
     uses: ./.github/workflows/service-build.yml
     with:
       service: auth-service
+      port: 8081
 
   build-transaction:
     needs: detect-changes
@@ -54,6 +55,7 @@ jobs:
     uses: ./.github/workflows/service-build.yml
     with:
       service: transaction-service
+      port: 8082
 
   build-budget:
     needs: detect-changes
@@ -61,6 +63,7 @@ jobs:
     uses: ./.github/workflows/service-build.yml
     with:
       service: budget-service
+      port: 8083
 
   build-chat:
     needs: detect-changes
@@ -68,6 +71,7 @@ jobs:
     uses: ./.github/workflows/service-build.yml
     with:
       service: chat-service
+      port: 8084
 
   build-notification:
     needs: detect-changes
@@ -75,6 +79,7 @@ jobs:
     uses: ./.github/workflows/service-build.yml
     with:
       service: notification-service
+      port: 8085
 
   build-report:
     needs: detect-changes
@@ -82,3 +87,4 @@ jobs:
     uses: ./.github/workflows/service-build.yml
     with:
       service: report-service
+      port: 8086

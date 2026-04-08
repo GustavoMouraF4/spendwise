@@ -1,32 +1,51 @@
-name: Feature
-description: Nova funcionalidade
+name: Feature request
+description: Nova funcionalidade ou melhoria
 title: "[FEATURE] "
 labels: ["feature", "triage"]
+assignees: []
 body:
   - type: dropdown
     id: service
     attributes:
       label: Serviço
-      options: [auth-service, transaction-service, budget-service, chat-service, notification-service, report-service, frontend, infra]
+      options:
+        - auth-service
+        - transaction-service
+        - budget-service
+        - chat-service
+        - notification-service
+        - report-service
+        - frontend
+        - infra
     validations:
       required: true
+
   - type: textarea
     id: description
     attributes:
       label: Descrição
+      description: Descreva a funcionalidade desejada
     validations:
       required: true
+
   - type: textarea
     id: acceptance
     attributes:
       label: Critérios de aceitação
-      placeholder: "- [ ] Critério 1\n- [ ] Critério 2"
+      description: O que precisa estar funcionando para considerar essa feature concluída?
+      placeholder: |
+        - [ ] Critério 1
+        - [ ] Critério 2
     validations:
       required: true
+
   - type: dropdown
     id: priority
     attributes:
       label: Prioridade
-      options: [Alta, Média, Baixa]
+      options:
+        - Alta
+        - Média
+        - Baixa
     validations:
       required: true

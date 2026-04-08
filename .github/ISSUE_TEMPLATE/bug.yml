@@ -1,5 +1,5 @@
-name: Bug
-description: Reportar um bug
+name: Bug report
+description: Reportar um bug ou comportamento inesperado
 title: "[BUG] "
 labels: ["bug", "triage"]
 body:
@@ -7,27 +7,44 @@ body:
     id: service
     attributes:
       label: Serviço afetado
-      options: [auth-service, transaction-service, budget-service, chat-service, notification-service, report-service, frontend, infra]
+      options:
+        - auth-service
+        - transaction-service
+        - budget-service
+        - chat-service
+        - notification-service
+        - report-service
+        - frontend
+        - infra
     validations:
       required: true
+
   - type: textarea
     id: description
     attributes:
-      label: Descrição
+      label: Descrição do bug
+      description: Descreva o que aconteceu
     validations:
       required: true
+
   - type: textarea
     id: reproduce
     attributes:
       label: Como reproduzir
+      placeholder: |
+        1. Chamar endpoint POST /api/v1/...
+        2. Com payload ...
+        3. Observar erro ...
     validations:
       required: true
+
   - type: textarea
     id: expected
     attributes:
       label: Comportamento esperado
     validations:
       required: true
+
   - type: textarea
     id: logs
     attributes:
