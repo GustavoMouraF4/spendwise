@@ -10,5 +10,5 @@ WORKDIR /app
 RUN addgroup -S spendwise && adduser -S spendwise -G spendwise
 USER spendwise
 COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 8082
+EXPOSE 8083
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-XX:+UseVirtualThreads", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

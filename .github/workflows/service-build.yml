@@ -6,9 +6,6 @@ on:
       service:
         required: true
         type: string
-      port:
-        required: true
-        type: number
 
 jobs:
   build-and-test:
@@ -18,9 +15,9 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: fintrack
-          POSTGRES_PASSWORD: fintrack
-          POSTGRES_DB: fintrack_test
+          POSTGRES_USER: spendwise
+          POSTGRES_PASSWORD: spendwise
+          POSTGRES_DB: spendwise_test
         ports:
           - 5432:5432
         options: >-
@@ -49,16 +46,17 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build and test ${{ inputs.service }}
+      - name: Build ${{ inputs.service }}
         working-directory: ${{ inputs.service }}
         run: mvn clean verify --no-transfer-progress
         env:
-          DB_URL: jdbc:postgresql://localhost:5432/fintrack_test
-          DB_USER: fintrack
-          DB_PASSWORD: fintrack
+          DB_URL: jdbc:postgresql://localhost:5432/spendwise_test
+          DB_USER: spendwise
+          DB_PASSWORD: spendwise
           REDIS_HOST: localhost
           KAFKA_BROKERS: localhost:9092
-          JWT_SECRET: dGVzdFNlY3JldEtleUZvckNJQ0RUZXh0T25seU5vdFByb2R1Y3Rpb24=
+          JWT_SECRET: c3BlbmR3aXNlU2VjcmV0S2V5VGhhdElzQXRMZWFzdDY0Qnl0ZXNMb25nRm9ySldU
+          ANTHROPIC_API_KEY: test-key
 
       - name: Upload test results
         if: always()
