@@ -1,6 +1,9 @@
 spring:
   application:
     name: notification-service
+  threads:
+    virtual:
+      enabled: true
 
   kafka:
     bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
@@ -10,17 +13,20 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: "com.fintrack.*"
+        spring.json.trusted.packages: "com.spendwise.*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 aws:
   region: ${AWS_REGION:us-east-1}
-  ses:
-    from-email: ${SES_FROM_EMAIL:noreply@fintrack.com}
-  sns:
-    platform-arn: ${SNS_PLATFORM_ARN:}
 
 server:
   port: ${SERVER_PORT:8085}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
 
 management:
   endpoints:
