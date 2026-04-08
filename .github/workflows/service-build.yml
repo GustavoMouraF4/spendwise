@@ -1,0 +1,68 @@
+name: Service Build (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      port:
+        required: true
+        type: number
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: fintrack
+          POSTGRES_PASSWORD: fintrack
+          POSTGRES_DB: fintrack_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and test ${{ inputs.service }}
+        working-directory: ${{ inputs.service }}
+        run: mvn clean verify --no-transfer-progress
+        env:
+          DB_URL: jdbc:postgresql://localhost:5432/fintrack_test
+          DB_USER: fintrack
+          DB_PASSWORD: fintrack
+          REDIS_HOST: localhost
+          KAFKA_BROKERS: localhost:9092
+          JWT_SECRET: dGVzdFNlY3JldEtleUZvckNJQ0RUZXh0T25seU5vdFByb2R1Y3Rpb24=
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ inputs.service }}
+          path: ${{ inputs.service }}/target/surefire-reports/

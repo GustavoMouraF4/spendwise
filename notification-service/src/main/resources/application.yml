@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: notification-service
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+    consumer:
+      group-id: notification-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.fintrack.*"
+
+aws:
+  region: ${AWS_REGION:us-east-1}
+  ses:
+    from-email: ${SES_FROM_EMAIL:noreply@fintrack.com}
+  sns:
+    platform-arn: ${SNS_PLATFORM_ARN:}
+
+server:
+  port: ${SERVER_PORT:8085}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: report-service
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/fintrack_report}
+    username: ${DB_USER:fintrack}
+    password: ${DB_PASSWORD:fintrack}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+    consumer:
+      group-id: report-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.fintrack.*"
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${AUTH_SERVICE_JWK_URI:http://localhost:8081/api/v1/auth/jwks}
+
+aws:
+  region: ${AWS_REGION:us-east-1}
+  s3:
+    bucket: ${S3_REPORTS_BUCKET:fintrack-reports}
+
+server:
+  port: ${SERVER_PORT:8086}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

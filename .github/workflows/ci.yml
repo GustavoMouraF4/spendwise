@@ -1,0 +1,90 @@
+name: CI - Build & Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      auth:         ${{ steps.changes.outputs.auth }}
+      transaction:  ${{ steps.changes.outputs.transaction }}
+      budget:       ${{ steps.changes.outputs.budget }}
+      chat:         ${{ steps.changes.outputs.chat }}
+      notification: ${{ steps.changes.outputs.notification }}
+      report:       ${{ steps.changes.outputs.report }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            auth:
+              - 'auth-service/**'
+              - 'pom.xml'
+            transaction:
+              - 'transaction-service/**'
+              - 'pom.xml'
+            budget:
+              - 'budget-service/**'
+              - 'pom.xml'
+            chat:
+              - 'chat-service/**'
+              - 'pom.xml'
+            notification:
+              - 'notification-service/**'
+              - 'pom.xml'
+            report:
+              - 'report-service/**'
+              - 'pom.xml'
+
+  build-auth:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.auth == 'true'
+    uses: ./.github/workflows/service-build.yml
+    with:
+      service: auth-service
+      port: 8081
+
+  build-transaction:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.transaction == 'true'
+    uses: ./.github/workflows/service-build.yml
+    with:
+      service: transaction-service
+      port: 8082
+
+  build-budget:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.budget == 'true'
+    uses: ./.github/workflows/service-build.yml
+    with:
+      service: budget-service
+      port: 8083
+
+  build-chat:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.chat == 'true'
+    uses: ./.github/workflows/service-build.yml
+    with:
+      service: chat-service
+      port: 8084
+
+  build-notification:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.notification == 'true'
+    uses: ./.github/workflows/service-build.yml
+    with:
+      service: notification-service
+      port: 8085
+
+  build-report:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.report == 'true'
+    uses: ./.github/workflows/service-build.yml
+    with:
+      service: report-service
+      port: 8086
