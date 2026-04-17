@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  flyway:
+    enabled: true
+    validate-on-migrate: true
+
+jwt:
+  access-token-expiration: 3600000
+  refresh-token-expiration: 604800000
