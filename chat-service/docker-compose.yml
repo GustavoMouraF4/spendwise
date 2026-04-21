@@ -17,6 +17,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   redis:
     image: redis:7-alpine
     container_name: spendwise-chat-redis
@@ -29,6 +30,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
     container_name: spendwise-chat-zookeeper
@@ -36,6 +38,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
       - "2181:2181"
+
   kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: spendwise-chat-kafka
@@ -53,6 +56,7 @@ services:
       interval: 15s
       timeout: 10s
       retries: 5
+
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: spendwise-chat-kafka-ui
@@ -62,6 +66,36 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+  chat-service:
+    build:
+      context: ..
+      dockerfile: chat-service/Dockerfile
+    container_name: spendwise-chat-service
+    ports:
+      - "8084:8084"
+    environment:
+      SERVER_PORT: 8084
+      DB_URL: jdbc:postgresql://postgres:5432/spendwise_chat
+      DB_USER: spendwise
+      DB_PASSWORD: spendwise
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8084/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   chat_postgres_data:

@@ -8,7 +8,7 @@
     <artifactId>spendwise-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <n>SpendWise - Parent BOM</n>
+    <name>SpendWise - Parent BOM</name>
     <description>Parent POM: apenas versões. Nenhuma dependência de runtime aqui.</description>
 
     <modules>
@@ -162,7 +162,7 @@
     <repositories>
         <repository>
             <id>spring-milestones</id>
-            <n>Spring Milestones</n>
+            <name>Spring Milestones</name>
             <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>

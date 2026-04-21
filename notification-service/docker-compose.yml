@@ -8,6 +8,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
       - "2181:2181"
+
   kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: spendwise-notification-kafka
@@ -25,6 +26,7 @@ services:
       interval: 15s
       timeout: 10s
       retries: 5
+
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: spendwise-notification-kafka-ui
@@ -35,5 +37,27 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
-volumes:
-  
+  notification-service:
+    build:
+      context: ..
+      dockerfile: notification-service/Dockerfile
+    container_name: spendwise-notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      SERVER_PORT: 8085
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    depends_on:
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8085/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes: {}
