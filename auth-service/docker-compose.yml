@@ -17,6 +17,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   redis:
     image: redis:7-alpine
     container_name: spendwise-auth-redis
@@ -29,6 +30,35 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  auth-service:
+    build:
+      context: ..
+      dockerfile: auth-service/Dockerfile
+    container_name: spendwise-auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      SERVER_PORT: 8081
+      DB_URL: jdbc:postgresql://postgres:5432/spendwise_auth
+      DB_USER: spendwise
+      DB_PASSWORD: spendwise
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-c3BlbmR3aXNlU2VjcmV0S2V5VGhhdElzQXRMZWFzdDY0Qnl0ZXNMb25nRm9ySldU}
+      JWT_ACCESS_EXPIRATION: 3600000
+      JWT_REFRESH_EXPIRATION: 604800000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   auth_postgres_data:
